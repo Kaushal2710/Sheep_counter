@@ -1,0 +1,71 @@
+#include<time.h>
+
+int trigpin1=1,i,j;
+int echopin1=2;
+int trigpin2=3;
+int echopin2=4;
+int count=0;
+int gate_width=100;
+float duration1, duration2, distance1, distance2;
+time_t t1,t2,t;
+
+void setup()
+{
+  pinMode(trigpin1, OUTPUT);
+  pinMode(echopin1, INPUT);
+  pinMode(trigpin2, OUTPUT);
+  pinMode(echopin2, INPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  digitalWrite(trigpin1, LOW);
+  delayMicroseconds(20);	//these 2 lines clear triger pin. clearing means ensuring there is not a signal already  
+  digitalWrite(trigpin1, HIGH);
+  delayMicroseconds(50);
+  digitalWrite(trigpin1, LOW);
+  duration1 = pulseIn(echopin1, HIGH);//pulseIn function gives time directly
+  distance1= 0.034*(duration1/2);
+  
+  digitalWrite(trigpin2, LOW);
+  delayMicroseconds(20);	//these 2 lines clear triger pin. clearing means ensuring there is not a signal already 
+  digitalWrite(trigpin2, HIGH);
+  delayMicroseconds(50);
+  digitalWrite(trigpin2, LOW); 
+  duration2 = pulseIn(echopin2, HIGH);//pulseIn function gives time directly
+  distance2= 0.034*(duration2/2);
+  
+  if(distance1<gate_width){
+    
+    delay(2000); 
+    digitalWrite(trigpin2, LOW);
+    delayMicroseconds(20);	//these 2 lines clear triger pin. clearing means ensuring there is not a signal already 
+    digitalWrite(trigpin2, HIGH);
+    delayMicroseconds(50);
+    digitalWrite(trigpin2, LOW); 
+    duration2 = pulseIn(echopin2, HIGH);//pulseIn function gives time directly
+    distance2= 0.034*(duration2/2);
+     
+    if(distance2<gate_width){
+      count++;
+      Serial.println(count);
+  	}
+  }  
+ 
+  else if(distance2<gate_width){
+  	delay(2000); 
+    digitalWrite(trigpin1, LOW);
+    delayMicroseconds(20);	//these 2 lines clear triger pin. clearing means ensuring there is not a signal already 
+    digitalWrite(trigpin1, HIGH);
+    delayMicroseconds(50);
+    digitalWrite(trigpin1, LOW); 
+    duration1 = pulseIn(echopin1, HIGH);//pulseIn function gives time directly
+    distance1= 0.034*(duration1/2);
+    
+    if(distance1<gate_width){
+      count--;
+      Serial.println(count);
+  	}
+  }
+}
